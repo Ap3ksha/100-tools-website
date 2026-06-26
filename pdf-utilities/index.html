@@ -54,7 +54,6 @@
     </main>
 
     <script>
-        // Tell PDF.js where the worker script is hosted
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
         const dropZone = document.getElementById('dropZone');
@@ -62,10 +61,8 @@
         const loadingState = document.getElementById('loadingState');
         const resultsWrapper = document.getElementById('resultsWrapper');
 
-        // Click to open file input trigger
         dropZone.addEventListener('click', () => pdfInput.click());
 
-        // Handle file drop states
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('border-blue-500', 'bg-slate-900/30');
@@ -95,11 +92,9 @@
                 return;
             }
 
-            // Display loading interface layout
             loadingState.classList.remove('hidden');
             resultsWrapper.classList.add('hidden');
 
-            // Format layout file sizing metrics
             const sizeInKb = (file.size / 1024).toFixed(1);
             document.getElementById('fileSize').textContent = sizeInKb > 1024 ? (sizeInKb / 1024).toFixed(1) + " MB" : sizeInKb + " KB";
 
@@ -107,14 +102,10 @@
                 const fileReader = new FileReader();
                 fileReader.onload = async function () {
                     const typedarray = new Uint8Array(this.result);
-                    
-                    // Load the PDF via compiled workers
                     const pdf = await pdfjsLib.getDocument(typedarray).promise;
                     document.getElementById('pageCount').textContent = pdf.numPages;
 
                     let accumulatedText = "";
-
-                    // Run loop iterations over pages to grab internal character blocks
                     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                         const page = await pdf.getPage(pageNum);
                         const textContent = await page.getTextContent();
@@ -129,7 +120,7 @@
                 fileReader.readAsArrayBuffer(file);
             } catch (error) {
                 console.error(error);
-                alert("Could not extract content path from this specific PDF encryption structure.");
+                alert("Could not extract text structure from this PDF.");
                 loadingState.classList.add('hidden');
             }
         }
@@ -139,7 +130,7 @@
             if (!textarea.value) return;
             textarea.select();
             navigator.clipboard.writeText(textarea.value);
-            alert("All extracted PDF text string content copied to clipboard!");
+            alert("All extracted PDF text copied to clipboard!");
         }
     </script>
 </body>
