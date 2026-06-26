@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Unit Converter - DevTools 100</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
+    <header class="max-w-2xl mx-auto mb-8 flex justify-between items-center">
+        <a href="../index.html" class="text-blue-400 hover:underline text-sm">← Back to Home</a>
+        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Tool 6 of 100</span>
+    </header>
+
+    <main class="max-w-2xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h1 class="text-2xl font-bold mb-2 text-slate-100">Universal Unit Converter</h1>
+        <p class="text-slate-400 text-sm mb-6">Convert metrics instantly across length, weight, and temperature units.</p>
+        
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-slate-400 text-sm mb-2">Conversion Category</label>
+                <select id="category" onchange="updateUnits()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
+                    <option value="length">Length (Meters to Feet)</option>
+                    <option value="weight">Weight (Kilograms to Pounds)</option>
+                    <option value="temp">Temperature (Celsius to Fahrenheit)</option>
+                </select>
+            </div>
+            
+            <div>
+                <label id="inputLabel" class="block text-slate-400 text-sm mb-2">Value to Convert</label>
+                <input type="number" id="inputValue" placeholder="Enter number..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
+            </div>
+
+            <button onclick="convertUnits()" class="w-full bg-gradient-to-r from-blue-500 to-emerald-400 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition mt-2">Convert</button>
+        </div>
+
+        <div id="convertResultBox" class="hidden bg-slate-950 border border-slate-800 p-6 rounded-xl text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold block mb-1">Converted Value</span>
+            <span id="convertedResult" class="text-3xl font-extrabold text-emerald-400">0.00</span>
+        </div>
+    </main>
+
+    <script>
+        function updateUnits() {
+            document.getElementById('convertResultBox').classList.add('hidden');
+            document.getElementById('inputValue').value = "";
+        }
+
+        function convertUnits() {
+            const category = document.getElementById('category').value;
+            const input = parseFloat(document.getElementById('inputValue').value);
+            const resultBox = document.getElementById('convertResultBox');
+            const resultDisplay = document.getElementById('convertedResult');
+
+            if (isNaN(input)) {
+                alert("Please enter a valid numerical value.");
+                return;
+            }
+
+            let result = 0;
+            let unitText = "";
+
+            if (category === "length") {
+                result = input * 3.28084;
+                unitText = " Feet";
+            } else if (category === "weight") {
+                result = input * 2.20462;
+                unitText = " Pounds";
+            } else if (category === "temp") {
+                result = (input * 9/5) + 32;
+                unitText = " °F";
+            }
+
+            resultDisplay.textContent = result.toFixed(2) + unitText;
+            resultBox.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
