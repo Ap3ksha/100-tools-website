@@ -3,144 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Text Extractor & Analyzer - DevTools 100</title>
+    <title>DevTools 100 - Free Online Developer Utilities</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
-    <header class="max-w-3xl mx-auto mb-8 flex justify-between items-center">
-        <a href="../index.html" class="text-blue-400 hover:underline text-sm">← Back to Home</a>
-        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Tool 7 of 100</span>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6 md:p-12">
+
+    <header class="max-w-5xl mx-auto text-center mb-12">
+        <h1 class="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent mb-3">🛠️ DevTools 100</h1>
+        <p class="text-slate-400 max-w-md mx-auto text-sm md:text-base">A collection of lightweight, blazing fast web utilities for daily use.</p>
     </header>
 
-    <main class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <h1 class="text-2xl font-bold mb-2 text-slate-100">PDF Text Extractor & Analyzer</h1>
-        <p class="text-slate-400 text-sm mb-6">Upload any PDF file to instantly count pages, extract text metrics, and inspect document data completely offline.</p>
+    <main class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl p-8 text-center cursor-pointer bg-slate-950/50 transition mb-6">
-            <div class="text-4xl mb-3">📄</div>
-            <p class="text-slate-300 font-medium mb-1">Click to browse or drag PDF here</p>
-            <p class="text-slate-500 text-xs">Your files never leave your computer. Processing happens 100% locally.</p>
-            <input type="file" id="pdfInput" accept="application/pdf" class="hidden">
-        </div>
+        <a href="./word-counter/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-blue-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-blue-400 text-2xl mb-3">📝</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-blue-400 transition mb-2">Word Counter</h2>
+            <p class="text-slate-400 text-sm">Count characters, words, and paragraphs in real-time metrics.</p>
+        </a>
 
-        <div id="loadingState" class="hidden text-center py-4">
-            <div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-blue-500 rounded-full mb-2"></div>
-            <p class="text-slate-400 text-sm">Analyzing document structure...</p>
-        </div>
+        <a href="./password-generator/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-emerald-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-emerald-400 text-2xl mb-3">🔐</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-emerald-400 transition mb-2">Password Generator</h2>
+            <p class="text-slate-400 text-sm">Instantly create strong, random passwords to protect your accounts.</p>
+        </a>
 
-        <div id="resultsWrapper" class="hidden space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl text-center">
-                    <span class="text-xs text-slate-500 uppercase font-semibold block mb-1">Total Pages</span>
-                    <span id="pageCount" class="text-3xl font-extrabold text-blue-400">0</span>
-                </div>
-                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl text-center">
-                    <span class="text-xs text-slate-500 uppercase font-semibold block mb-1">File Size</span>
-                    <span id="fileSize" class="text-3xl font-extrabold text-emerald-400">0 KB</span>
-                </div>
-            </div>
+        <a href="./bmi-calculator/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-cyan-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-cyan-400 text-2xl mb-3">⚖️</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-cyan-400 transition mb-2">BMI Calculator</h2>
+            <p class="text-slate-400 text-sm">Calculate your body mass index and quickly check your health category metrics.</p>
+        </a>
 
-            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Extracted Content Text</h3>
-                    <button onclick="copyPdfText()" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg font-medium transition">
-                        📋 Copy All Text
-                    </button>
-                </div>
-                <textarea id="extractedTextDisplay" rows="12" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg p-3 text-sm text-slate-300 font-mono focus:outline-none focus:border-blue-500 resize-y" placeholder="Extracted readable sentences will populate here..."></textarea>
-            </div>
-        </div>
+        <a href="./age-calculator/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-purple-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-purple-400 text-2xl mb-3">📅</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-purple-400 transition mb-2">Age Calculator</h2>
+            <p class="text-slate-400 text-sm">Find your exact breakdown of age in years, months, and days instantly.</p>
+        </a>
+
+        <a href="./emi-calculator/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-amber-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-amber-400 text-2xl mb-3">💳</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-amber-400 transition mb-2">EMI Calculator</h2>
+            <p class="text-slate-400 text-sm">Calculate your loan payments, interest charges, and tenure milestones.</p>
+        </a>
+
+        <a href="./unit-converter/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-indigo-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-indigo-400 text-2xl mb-3">🔄</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-indigo-400 transition mb-2">Unit Converter</h2>
+            <p class="text-slate-400 text-sm">Convert dimensions smoothly between land metrics, weights, and temp scales.</p>
+        </a>
+
+        <a href="./pdf-utilities/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-red-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-red-400 text-2xl mb-3">📂</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-red-400 transition mb-2">PDF Analyzer</h2>
+            <p class="text-slate-400 text-sm">Scan document page metrics and pull clean textual arrays instantly offline.</p>
+        </a>
+
     </main>
 
-    <script>
-        // Tell PDF.js where the worker script is hosted
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-        const dropZone = document.getElementById('dropZone');
-        const pdfInput = document.getElementById('pdfInput');
-        const loadingState = document.getElementById('loadingState');
-        const resultsWrapper = document.getElementById('resultsWrapper');
-
-        // Click to open file input trigger
-        dropZone.addEventListener('click', () => pdfInput.click());
-
-        // Handle file drop states
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-blue-500', 'bg-slate-900/30');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-blue-500', 'bg-slate-900/30');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-blue-500', 'bg-slate-900/30');
-            if (e.dataTransfer.files.length > 0) {
-                processPDFFile(e.dataTransfer.files[0]);
-            }
-        });
-
-        pdfInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                processPDFFile(e.target.files[0]);
-            }
-        });
-
-        async function processPDFFile(file) {
-            if (file.type !== "application/pdf") {
-                alert("Please drop or upload an actual standard .pdf file asset.");
-                return;
-            }
-
-            // Display loading interface layout
-            loadingState.classList.remove('hidden');
-            resultsWrapper.classList.add('hidden');
-
-            // Format layout file sizing metrics
-            const sizeInKb = (file.size / 1024).toFixed(1);
-            document.getElementById('fileSize').textContent = sizeInKb > 1024 ? (sizeInKb / 1024).toFixed(1) + " MB" : sizeInKb + " KB";
-
-            try {
-                const fileReader = new FileReader();
-                fileReader.onload = async function () {
-                    const typedarray = new Uint8Array(this.result);
-                    
-                    // Load the PDF via compiled workers
-                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                    document.getElementById('pageCount').textContent = pdf.numPages;
-
-                    let accumulatedText = "";
-
-                    // Run loop iterations over pages to grab internal character blocks
-                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                        const page = await pdf.getPage(pageNum);
-                        const textContent = await page.getTextContent();
-                        const pageItems = textContent.items.map(item => item.str).join(" ");
-                        accumulatedText += `--- PAGE ${pageNum} ---\n${pageItems}\n\n`;
-                    }
-
-                    document.getElementById('extractedTextDisplay').value = accumulatedText.trim();
-                    loadingState.classList.add('hidden');
-                    resultsWrapper.classList.remove('hidden');
-                };
-                fileReader.readAsArrayBuffer(file);
-            } catch (error) {
-                console.error(error);
-                alert("Could not extract content path from this specific PDF encryption structure.");
-                loadingState.classList.add('hidden');
-            }
-        }
-
-        function copyPdfText() {
-            const textarea = document.getElementById('extractedTextDisplay');
-            if (!textarea.value) return;
-            textarea.select();
-            navigator.clipboard.writeText(textarea.value);
-            alert("All extracted PDF text string content copied to clipboard!");
-        }
-    </script>
 </body>
 </html>
