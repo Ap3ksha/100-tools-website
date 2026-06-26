@@ -3,126 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100+ Multi-Tool Platform</title>
-    <!-- Tailwind CSS for styling -->
+    <title>DevTools 100 - Free Online Developer Utilities</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        body { background-color: #0f172a; color: #f8fafc; }
-    </style>
 </head>
-<body class="font-sans min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6 md:p-12">
 
-    <!-- Header -->
-    <header class="border-b border-slate-800 p-6 bg-slate-900/50 backdrop-blur">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-                🔧 DevTools 100
-            </h1>
-            <span class="text-sm bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20">
-                Tool 1 of 100 Live
-            </span>
-        </div>
+    <!-- Header Section -->
+    <header class="max-w-5xl mx-auto text-center mb-12">
+        <h1 class="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent mb-3">🛠️ DevTools 100</h1>
+        <p class="text-slate-400 max-w-md mx-auto text-sm md:text-base">A collection of lightweight, blazing fast web utilities for daily use.</p>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-5xl w-full mx-auto p-6 flex-grow">
+    <!-- Grid Container for Tools -->
+    <main class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <!-- Tool 1: Word Counter Section -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto mt-8">
-            <h2 class="text-xl font-semibold mb-2 text-slate-200">Tool #1: Real-time Word & Character Counter</h2>
-            <p class="text-slate-400 text-sm mb-6">Type or paste your text below to instantly get word, character, and paragraph metrics.</p>
-            
-            <textarea id="textInput" rows="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-100 focus:outline-none focus:border-blue-500 transition-colors placeholder-slate-600" placeholder="Start typing here..."></textarea>
-            
-            <!-- Counter Grid -->
-            <div class="grid grid-cols-3 gap-4 mt-6">
-                <div class="bg-slate-950 border border-slate-800/50 p-4 rounded-xl text-center">
-                    <div id="charCount" class="text-2xl font-bold text-blue-400">0</div>
-                    <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Characters</div>
-                </div>
-                <div class="bg-slate-950 border border-slate-800/50 p-4 rounded-xl text-center">
-                    <div id="wordCount" class="text-2xl font-bold text-emerald-400">0</div>
-                    <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Words</div>
-                </div>
-                <div class="bg-slate-950 border border-slate-800/50 p-4 rounded-xl text-center">
-                    <div id="paraCount" class="text-2xl font-bold text-purple-400">0</div>
-                    <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Paragraphs</div>
-                </div>
-            </div>
-        </section>
-<!-- Tool 2: Password Generator Section -->
-<section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl max-w-2xl mx-auto mt-8">
-    <h2 class="text-xl font-semibold mb-2 text-slate-200">Tool #2: Random Password Generator</h2>
-    <p class="text-slate-400 text-sm mb-4">Generate a strong, secure password instantly.</p>
-    
-    <div class="flex gap-2 mb-4">
-        <input type="text" id="passwordOutput" readonly placeholder="Your secure password" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
-        <button onclick="copyPassword()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 rounded-xl font-medium transition">Copy</button>
-    </div>
+        <!-- Card Tool 1 -->
+        <a href="./word-counter/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-blue-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-blue-400 text-2xl mb-3">📝</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-blue-400 transition mb-2">Word Counter</h2>
+            <p class="text-slate-400 text-sm">Count characters, words, and paragraphs in real-time metrics.</p>
+        </a>
 
-    <div class="space-y-3">
-        <div class="flex justify-between items-center">
-            <label class="text-slate-300 text-sm">Password Length: <span id="lengthVal">12</span></label>
-            <input type="range" id="passwordLength" min="8" max="30" value="12" oninput="document.getElementById('lengthVal').innerText = this.value" class="w-2/3 accent-blue-500">
+        <!-- Card Tool 2 -->
+        <a href="./password-generator/" class="block bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-emerald-500/50 hover:bg-slate-900/80 transition shadow-xl group">
+            <div class="text-emerald-400 text-2xl mb-3">🔐</div>
+            <h2 class="text-lg font-bold text-slate-200 group-hover:text-emerald-400 transition mb-2">Password Generator</h2>
+            <p class="text-slate-400 text-sm">Instantly create strong, random passwords to protect your accounts.</p>
+        </a>
+
+        <!-- Card Tool 3 Placeholder -->
+        <div class="bg-slate-900/40 border border-slate-800/50 border-dashed p-6 rounded-2xl flex flex-col justify-center items-center text-center opacity-60">
+            <span class="text-2xl mb-2">🚀</span>
+            <span class="text-sm text-slate-500 font-medium">Tool #3 Coming Soon</span>
         </div>
-        <button onclick="generatePassword()" class="w-full bg-gradient-to-r from-blue-500 to-emerald-400 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition mt-2">Generate Password</button>
-    </div>
-</section>
+
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 p-6 text-center text-sm text-slate-600 bg-slate-950">
-        <p>© 2026 My 100 Tools Project. Building 1 tool every single day.</p>
-    </footer>
-
-    <!-- JavaScript logic for Tool #1 -->
-    <script>
-        const textInput = document.getElementById('textInput');
-        const charCount = document.getElementById('charCount');
-        const wordCount = document.getElementById('wordCount');
-        const paraCount = document.getElementById('paraCount');
-
-        textInput.addEventListener('input', () => {
-            const text = textInput.value;
-            
-            // Character count
-            charCount.textContent = text.length;
-            
-            // Word count
-            const words = text.trim().split(/\s+/).filter(item => item.length > 0);
-            wordCount.textContent = words.length;
-            
-            // Paragraph count
-            const paragraphs = text.split(/\n+/).filter(item => item.trim().length > 0);
-            paraCount.textContent = paragraphs.length;
-        });
-       
-
-       
-        function generatePassword() {
-            const length = document.getElementById('passwordLength').value;
-            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-            let password = "";
-            
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * charset.length);
-                password += charset[randomIndex];
-            }
-            
-            document.getElementById('passwordOutput').value = password;
-        }
-
-        function copyPassword() {
-            const passwordField = document.getElementById('passwordOutput');
-            if (!passwordField.value) return;
-            
-            passwordField.select();
-            navigator.clipboard.writeText(passwordField.value);
-            alert("Password copied to clipboard!");
-        }
-    </script>
-</body>
-</html>
-    </script>
 </body>
 </html>
