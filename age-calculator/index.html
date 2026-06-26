@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exact Age Calculator - DevTools 100</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
+    <header class="max-w-2xl mx-auto mb-8 flex justify-between items-center">
+        <a href="../index.html" class="text-blue-400 hover:underline text-sm">← Back to Home</a>
+        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Tool 4 of 100</span>
+    </header>
+
+    <main class="max-w-2xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h1 class="text-2xl font-bold mb-2 text-slate-100">Age Calculator</h1>
+        <p class="text-slate-400 text-sm mb-6">Select your date of birth to calculate your exact age down to the day.</p>
+        
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-slate-400 text-sm mb-2">Date of Birth</label>
+                <input type="date" id="dob" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 color-scheme-dark">
+            </div>
+            <button onclick="calculateAge()" class="w-full bg-gradient-to-r from-blue-500 to-emerald-400 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition mt-2">Calculate Age</button>
+        </div>
+
+        <div id="resultBox" class="hidden bg-slate-950 border border-slate-800 p-6 rounded-xl">
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="p-2">
+                    <span id="years" class="block text-3xl font-extrabold text-blue-400">0</span>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Years</span>
+                </div>
+                <div class="p-2">
+                    <span id="months" class="block text-3xl font-extrabold text-emerald-400">0</span>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Months</span>
+                </div>
+                <div class="p-2">
+                    <span id="days" class="block text-3xl font-extrabold text-purple-400">0</span>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Days</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function calculateAge() {
+            const dobInput = document.getElementById('dob').value;
+            if (!dobInput) {
+                alert("Please select a valid date.");
+                return;
+            }
+
+            const dob = new Date(dobInput);
+            const today = new Date();
+
+            let years = today.getFullYear() - dob.getFullYear();
+            let months = today.getMonth() - dob.getMonth();
+            let days = today.getDate() - dob.getDate();
+
+            // Adjust values if days are negative
+            if (days < 0) {
+                months--;
+                // Get remaining days of the previous month
+                const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            // Adjust values if months are negative
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('resultBox').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
