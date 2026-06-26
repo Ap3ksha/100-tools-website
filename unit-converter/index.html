@@ -14,67 +14,168 @@
 
     <main class="max-w-2xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <h1 class="text-2xl font-bold mb-2 text-slate-100">Universal Unit Converter</h1>
-        <p class="text-slate-400 text-sm mb-6">Convert metrics instantly across length, weight, and temperature units.</p>
+        <p class="text-slate-400 text-sm mb-6">Convert metrics instantly and bidirectionally across land, weight, and layout types.</p>
         
         <div class="space-y-4 mb-6">
             <div>
-                <label class="block text-slate-400 text-sm mb-2">Conversion Category</label>
-                <select id="category" onchange="updateUnits()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
-                    <option value="length">Length (Meters to Feet)</option>
-                    <option value="weight">Weight (Kilograms to Pounds)</option>
-                    <option value="temp">Temperature (Celsius to Fahrenheit)</option>
+                <label class="block text-slate-400 text-sm mb-2">Conversion Type</label>
+                <select id="typeSelect" onchange="populateUnits()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
+                    <option value="weight">Weight / Mass (Kg, Lbs, etc.)</option>
+                    <option value="land">Regional Land & Area (Marla, Gaj, Acre, Hectare)</option>
+                    <option value="length">Length & Distance (Meters, Feet, Miles)</option>
+                    <option value="temp">Temperature (Celsius, Fahrenheit)</option>
                 </select>
             </div>
             
-            <div>
-                <label id="inputLabel" class="block text-slate-400 text-sm mb-2">Value to Convert</label>
-                <input type="number" id="inputValue" placeholder="Enter number..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                    <label class="block text-xs uppercase tracking-wider text-slate-500 font-bold mb-2">From</label>
+                    <select id="fromUnit" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-200 mb-3 focus:outline-none focus:border-blue-500"></select>
+                    <input type="number" id="fromValue" oninput="performConversion('from')" placeholder="Enter value..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                    <label class="block text-xs uppercase tracking-wider text-slate-500 font-bold mb-2">To</label>
+                    <select id="toUnit" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-200 mb-3 focus:outline-none focus:border-blue-500"></select>
+                    <input type="number" id="toValue" oninput="performConversion('to')" placeholder="Result..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500">
+                </div>
             </div>
 
-            <button onclick="convertUnits()" class="w-full bg-gradient-to-r from-blue-500 to-emerald-400 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition mt-2">Convert</button>
-        </div>
-
-        <!-- Result Box -->
-        <div id="convertResultBox" class="hidden bg-slate-950 border border-slate-800 p-6 rounded-xl text-center">
-            <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold block mb-1">Converted Value</span>
-            <span id="convertedResult" class="text-3xl font-extrabold text-emerald-400">0.00</span>
+            <button onclick="swapUnits()" class="w-full bg-slate-800 text-slate-200 font-medium p-2.html rounded-xl border border-slate-700 hover:bg-slate-700 transition flex items-center justify-center gap-2 text-sm py-2.5">
+                🔄 Swap Conversion Direction
+            </button>
         </div>
     </main>
 
     <script>
-        function updateUnits() {
-            document.getElementById('convertResultBox').classList.add('hidden');
-            document.getElementById('inputValue').value = "";
+        const unitData = {
+            weight: {
+                kg: { label: "Kilograms (kg)", base: 1 },
+                lbs: { label: "Pounds (Lbs)", base: 0.45359237 },
+                g: { label: "Grams (g)", base: 0.001 },
+                oz: { label: "Ounces (oz)", base: 0.02834952 }
+            },
+            land: {
+                marla: { label: "Marla", base: 25.2928526 },
+                gaj: { label: "Gaj (Sq Yards)", base: 0.83612736 },
+                sqm: { label: "Square Meters (sqm)", base: 1 },
+                acre: { label: "Acre", base: 4046.85642 },
+                hectare: { label: "Hectare", base: 10000 }
+            },
+            length: {
+                m: { label: "Meters (m)", base: 1 },
+                ft: { label: "Feet (ft)", base: 0.3048 },
+                km: { label: "Kilometers (km)", base: 1000 },
+                mi: { label: "Miles (mi)", base: 1609.344 }
+            },
+            temp: {
+                c: { label: "Celsius (°C)", type: "special" },
+                f: { label: "Fahrenheit (°F)", type: "special" }
+            }
+        };
+
+        function populateUnits() {
+            const category = document.getElementById('typeSelect').value;
+            const fromDropdown = document.getElementById('fromUnit');
+            const toDropdown = document.getElementById('toUnit');
+            
+            fromDropdown.innerHTML = "";
+            toDropdown.innerHTML = "";
+
+            const units = Object.keys(unitData[category]);
+            units.forEach((unitKey, index) => {
+                const opt1 = document.createElement('option');
+                opt1.value = unitKey;
+                opt1.textContent = unitData[category][unitKey].label;
+                fromDropdown.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = unitKey;
+                opt2.textContent = unitData[category][unitKey].label;
+                toDropdown.appendChild(opt2);
+            });
+
+            if(units.length > 1) {
+                toDropdown.selectedIndex = 1;
+            }
+
+            clearInputs();
         }
 
-        function convertUnits() {
-            const category = document.getElementById('category').value;
-            const input = parseFloat(document.getElementById('inputValue').value);
-            const resultBox = document.getElementById('convertResultBox');
-            const resultDisplay = document.getElementById('convertedResult');
+        function clearInputs() {
+            document.getElementById('fromValue').value = "";
+            document.getElementById('toValue').value = "";
+        }
 
-            if (isNaN(input)) {
-                alert("Please enter a valid numerical value.");
+        function swapUnits() {
+            const fromDropdown = document.getElementById('fromUnit');
+            const toDropdown = document.getElementById('toUnit');
+            const tempValue = fromDropdown.value;
+            
+            fromDropdown.value = toDropdown.value;
+            toDropdown.value = tempValue;
+            
+            const fromInput = document.getElementById('fromValue');
+            const toInput = document.getElementById('toValue');
+            const tempValStr = fromInput.value;
+            
+            fromInput.value = toInput.value;
+            toInput.value = tempValStr;
+            
+            performConversion('from');
+        }
+
+        function performConversion(direction) {
+            const category = document.getElementById('typeSelect').value;
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            
+            const sourceInputId = direction === 'from' ? 'fromValue' : 'toValue';
+            const targetInputId = direction === 'from' ? 'toValue' : 'fromValue';
+            
+            const sourceVal = parseFloat(document.getElementById(sourceInputId).value);
+            const targetInput = document.getElementById(targetInputId);
+
+            if (isNaN(sourceVal)) {
+                targetInput.value = "";
                 return;
             }
 
-            let result = 0;
-            let unitText = "";
+            // Special handling for temperature conversion logic
+            if (category === "temp") {
+                let celsiusVal = 0;
+                const srcUnit = direction === 'from' ? fromUnit : toUnit;
+                const dstUnit = direction === 'from' ? toUnit : fromUnit;
 
-            if (category === "length") {
-                result = input * 3.28084;
-                unitText = " Feet";
-            } else if (category === "weight") {
-                result = input * 2.20462;
-                unitText = " Pounds";
-            } else if (category === "temp") {
-                result = (input * 9/5) + 32;
-                unitText = " °F";
+                if (srcUnit === 'c') {
+                    celsiusVal = sourceVal;
+                } else {
+                    celsiusVal = (sourceVal - 32) * 5 / 9;
+                }
+
+                let finalResult = 0;
+                if (dstUnit === 'c') {
+                    finalResult = celsiusVal;
+                } else {
+                    finalResult = (celsiusVal * 9 / 5) + 32;
+                }
+                
+                targetInput.value = Number(finalResult.toFixed(4));
+                return;
             }
 
-            resultDisplay.textContent = result.toFixed(2) + unitText;
-            resultBox.classList.remove('hidden');
+            // Standard base conversion logic
+            const srcUnitObj = unitData[category][direction === 'from' ? fromUnit : toUnit];
+            const dstUnitObj = unitData[category][direction === 'from' ? toUnit : fromUnit];
+            
+            const valueInBase = sourceVal * srcUnitObj.base;
+            const finalConvertedValue = valueInBase / dstUnitObj.base;
+
+            targetInput.value = Number(finalConvertedValue.toFixed(4));
         }
+
+        // Run on initial page construction load
+        populateUnits();
     </script>
 </body>
 </html>
