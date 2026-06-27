@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Media & PDF Compressor - DevTools 100</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
+    <header class="max-w-2xl mx-auto mb-8 flex justify-between items-center">
+        <a href="../index.html" class="text-blue-400 hover:underline text-sm">← Back to Home</a>
+        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Tool 10 of 100</span>
+    </header>
+
+    <main class="max-w-2xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h1 class="text-2xl font-bold mb-2 text-slate-100">Universal File Compressor</h1>
+        <p class="text-slate-400 text-sm mb-6">Shrink JPEGs, PNGs, and document layouts directly within your browser cache memory framework securely.</p>
+        
+        <div id="compressDropZone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-8 text-center cursor-pointer bg-slate-950/50 transition mb-6">
+            <div class="text-4xl mb-3">🗜️</div>
+            <p class="text-slate-300 font-medium mb-1">Select or drag an Image file here</p>
+            <p class="text-slate-500 text-xs">Supports PNG, JPEG, JPG, and web graphics assets.</p>
+            <input type="file" id="compressInput" accept="image/jpeg, image/png, image/jpg" class="hidden">
+        </div>
+
+        <div id="sliderWrapper" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-4 mb-6">
+            <div class="flex justify-between items-center">
+                <label class="text-xs text-slate-400 font-bold uppercase tracking-wider">Compression Ratio level</label>
+                <span id="ratioDisplay" class="text-xs text-emerald-400 font-mono font-bold">70% Quality</span>
+            </div>
+            <input type="range" id="qualityRange" min="10" max="100" value="70" oninput="updateQualityLabel()" class="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer">
+            
+            <button onclick="processCompressionSequence()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition">
+                ⚡ Shrink File Size Now
+            </button>
+        </div>
+
+        <div id="compressLoader" class="hidden text-center py-4">
+            <div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-emerald-500 rounded-full mb-2"></div>
+            <p class="text-slate-400 text-sm">Resampling high-density pixel buffers...</p>
+        </div>
+
+        <div id="compressResults" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-4">
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
+                    <span class="text-xs text-slate-500 block mb-1 uppercase">Original Size</span>
+                    <span id="origSizeText" class="text-lg font-bold text-slate-300">0 KB</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-3 rounded-lg">
+                    <span class="text-xs text-slate-500 block mb-1 uppercase">Compressed Size</span>
+                    <span id="newSizeText" class="text-lg font-bold text-emerald-400">0 KB</span>
+                </div>
+            </div>
+            <a id="downloadCompressedLink" download="shrunk_media_asset.jpg" href="#" class="block w-full text-center bg-emerald-500 text-slate-950 font-bold p-3 rounded-xl hover:opacity-95 transition">
+                📥 Download Compressed File
+            </a>
+        </div>
+    </main>
+
+    <script>
+        const dropZone = document.getElementById('compressDropZone');
+        const fileInput = document.getElementById('compressInput');
+        let workingFileAsset = null;
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) loadTargetAsset(e.target.files[0]);
+        });
+
+        function loadTargetAsset(file) {
+            workingFileAsset = file;
+            document.getElementById('sliderWrapper').classList.remove('hidden');
+            document.getElementById('compressResults').classList.add('hidden');
+        }
+
+        function updateQualityLabel() {
+            const val = document.getElementById('qualityRange').value;
+            document.getElementById('ratioDisplay').textContent = `${val}% Quality`;
+        }
+
+        function processCompressionSequence() {
+            if(!workingFileAsset) return;
+
+            const loader = document.getElementById('compressLoader');
+            const results = document.getElementById('compressResults');
+            
+            loader.classList.remove('hidden');
+            results.classList.add('hidden');
+
+            const targetQuality = parseFloat(document.getElementById('qualityRange').value) / 100;
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Retain native spatial array metrics
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Re-sample onto compression streams
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', targetQuality);
+                    
+                    // Render size evaluation formulas
+                    const origKb = (workingFileAsset.size / 1024).toFixed(1);
+                    const headStrLength = compressedDataUrl.split(',')[1].length;
+                    const newKb = ((headStrLength * 3 / 4) / 1024).toFixed(1);
+
+                    document.getElementById('origSizeText').textContent = `${origKb} KB`;
+                    document.getElementById('newSizeText').textContent = `${newKb} KB`;
+
+                    const downloadBtn = document.getElementById('downloadCompressedLink');
+                    downloadBtn.href = compressedDataUrl;
+                    
+                    loader.classList.add('hidden');
+                    results.classList.remove('hidden');
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(workingFileAsset);
+        }
+    </script>
+</body>
+</html>
