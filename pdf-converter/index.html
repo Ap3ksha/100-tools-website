@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal PDF Converter - DevTools 100</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
+    <header class="max-w-3xl mx-auto mb-8 flex justify-between items-center">
+        <a href="../index.html" class="text-blue-400 hover:underline text-sm">← Back to Home</a>
+        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Tool 9 of 100</span>
+    </header>
+
+    <main class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h1 class="text-2xl font-bold mb-2 text-slate-100">Universal PDF ↔ Image Converter</h1>
+        <p class="text-slate-400 text-sm mb-6">Convert PDF pages into image formats (PNG/JPG) or compile multiple images back into a clean PDF document instantly offline.</p>
+        
+        <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 mb-6">
+            <button id="modePdfToImgBtn" onclick="switchMode('pdfToImg')" class="bg-gradient-to-r from-blue-500 to-indigo-500 text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition">
+                PDF to Image (PNG/JPG)
+            </button>
+            <button id="modeImgToPdfBtn" onclick="switchMode('imgToPdf')" class="text-slate-400 font-semibold py-2 px-4 rounded-lg text-sm hover:text-slate-200 transition">
+                Images to PDF
+            </button>
+        </div>
+
+        <div id="pdfToImgArea" class="space-y-4">
+            <div id="pdfDropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl p-8 text-center cursor-pointer bg-slate-950/50 transition">
+                <div class="text-4xl mb-3">📄➡️🖼️</div>
+                <p class="text-slate-300 font-medium mb-1">Click to browse or drag a PDF file here</p>
+                <input type="file" id="pdfInput" accept="application/pdf" class="hidden">
+            </div>
+            
+            <div id="pdfSettings" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <label class="text-xs text-slate-400 font-bold block mb-1 uppercase">Output Image Format</label>
+                    <select id="imageFormat" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="image/png">PNG Format (.png)</option>
+                        <option value="image/jpeg">JPEG Format (.jpg)</option>
+                    </select>
+                </div>
+                <button onclick="convertPdfToImages()" class="bg-emerald-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl hover:opacity-90 transition">
+                    Convert PDF Pages
+                </button>
+            </div>
+        </div>
+
+        <div id="imgToPdfArea" class="hidden space-y-4">
+            <div id="imgDropZone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-8 text-center cursor-pointer bg-slate-950/50 transition">
+                <div class="text-4xl mb-3">🖼️➡️📄</div>
+                <p class="text-slate-300 font-medium mb-1">Click to upload multiple images (JPG, PNG, GIF, etc.)</p>
+                <input type="file" id="imgInput" accept="image/*" multiple class="hidden">
+            </div>
+
+            <div id="imgPreviewSection" class="hidden space-y-4">
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                    <span class="text-xs text-slate-400 font-bold block mb-2 uppercase">Selected Files Queue</span>
+                    <div id="imgQueueList" class="text-sm text-slate-300 space-y-1 font-mono"></div>
+                </div>
+                <button onclick="convertImagesToPdf()" class="w-full bg-indigo-500 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition">
+                    Compile Images into PDF
+                </button>
+            </div>
+        </div>
+
+        <div id="globalLoader" class="hidden text-center py-6">
+            <div class="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-blue-500 rounded-full mb-2"></div>
+            <p id="loaderText" class="text-slate-400 text-sm">Processing canvas conversion asset layers...</p>
+        </div>
+
+        <div id="outputContainer" class="hidden mt-6 bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Generated Assets Output</h3>
+            <div id="downloadLinks" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+    </main>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        
+        let currentMode = 'pdfToImg';
+        let selectedImagesArray = [];
+
+        // Setup File Selection Triggers
+        document.getElementById('pdfDropZone').addEventListener('click', () => document.getElementById('pdfInput').click());
+        document.getElementById('imgDropZone').addEventListener('click', () => document.getElementById('imgInput').click());
+
+        document.getElementById('pdfInput').addEventListener('change', function(e) {
+            if(e.target.files.length > 0) document.getElementById('pdfSettings').classList.remove('hidden');
+        });
+
+        document.getElementById('imgInput').addEventListener('change', function(e) {
+            if(e.target.files.length > 0) {
+                selectedImagesArray = Array.from(e.target.files);
+                const queueList = document.getElementById('imgQueueList');
+                queueList.innerHTML = "";
+                selectedImagesArray.forEach((file, index) => {
+                    queueList.innerHTML += `<div>📄 [File ${index+1}] ${file.name} (${(file.size/1024).toFixed(1)} KB)</div>`;
+                });
+                document.getElementById('imgPreviewSection').classList.remove('hidden');
+            }
+        });
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('outputContainer').classList.add('hidden');
+            document.getElementById('globalLoader').classList.add('hidden');
+            
+            if(mode === 'pdfToImg') {
+                document.getElementById('pdfToImgArea').classList.remove('hidden');
+                document.getElementById('imgToPdfArea').classList.add('hidden');
+                document.getElementById('modePdfToImgBtn').className = "bg-gradient-to-r from-blue-500 to-indigo-500 text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition";
+                document.getElementById('modeImgToPdfBtn').className = "text-slate-400 font-semibold py-2 px-4 rounded-lg text-sm hover:text-slate-200 transition";
+            } else {
+                document.getElementById('pdfToImgArea').className = "hidden";
+                document.getElementById('imgToPdfArea').className = "space-y-4";
+                document.getElementById('modeImgToPdfBtn').className = "bg-gradient-to-r from-blue-500 to-indigo-500 text-slate-950 font-bold py-2 px-4 rounded-lg text-sm transition";
+                document.getElementById('modePdfToImgBtn').className = "text-slate-400 font-semibold py-2 px-4 rounded-lg text-sm hover:text-slate-200 transition";
+            }
+        }
+
+        // --- PIPELINE 1: PDF TO IMAGES LOGIC ---
+        async function convertPdfToImages() {
+            const fileInput = document.getElementById('pdfInput');
+            const format = document.getElementById('imageFormat').value;
+            const ext = format === 'image/png' ? 'png' : 'jpg';
+            
+            if(!fileInput.files.length) return;
+            
+            const loader = document.getElementById('globalLoader');
+            const outputBox = document.getElementById('outputContainer');
+            const linkGrid = document.getElementById('downloadLinks');
+            
+            loader.classList.remove('hidden');
+            outputBox.classList.add('hidden');
+            linkGrid.innerHTML = "";
+            
+            try {
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                for(let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    const imgDataUrl = canvas.toDataURL(format);
+                    
+                    linkGrid.innerHTML += `
+                        <a href="${imgDataUrl}" download="Page_${i}.${ext}" class="block bg-slate-900 border border-slate-800 p-3 rounded-lg text-sm hover:border-blue-500 transition text-center font-medium">
+                            📥 Download Page ${i} (.${ext})
+                        </a>
+                    `;
+                }
+                loader.classList.add('hidden');
+                outputBox.classList.remove('hidden');
+            } catch(err) {
+                console.error(err);
+                alert("Failed to render PDF document content matrix pages.");
+                loader.classList.add('hidden');
+            }
+        }
+
+        // --- PIPELINE 2: IMAGES TO PDF LOGIC ---
+        async function convertImagesToPdf() {
+            if(!selectedImagesArray.length) return;
+            
+            const loader = document.getElementById('globalLoader');
+            const outputBox = document.getElementById('outputContainer');
+            const linkGrid = document.getElementById('downloadLinks');
+            
+            loader.classList.remove('hidden');
+            outputBox.classList.add('hidden');
+            linkGrid.innerHTML = "";
+            
+            const { jsPDF } = window.jspdf;
+            const pdfDoc = new jsPDF();
+            
+            try {
+                for(let i = 0; i < selectedImagesArray.length; i++) {
+                    const file = selectedImagesArray[i];
+                    const dataUrl = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    if(i > 0) pdfDoc.addPage();
+                    
+                    const pageWidth = pdfDoc.internal.pageSize.getWidth();
+                    const pageHeight = pdfDoc.internal.pageSize.getHeight();
+                    
+                    pdfDoc.addImage(dataUrl, 'JPEG', 0, 0, pageWidth, pageHeight);
+                }
+                
+                const pdfBlobUrl = pdfDoc.output('bloburl');
+                linkGrid.innerHTML = `
+                    <a href="${pdfBlobUrl}" download="compiled_images.pdf" class="col-span-full block bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold p-3 rounded-lg text-center shadow-md">
+                        📥 Download Finished Compiled PDF Document
+                    </a>
+                `;
+                loader.classList.add('hidden');
+                outputBox.classList.remove('hidden');
+            } catch(err) {
+                console.error(err);
+                alert("Failed to compile image assets into PDF document format structure.");
+                loader.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
