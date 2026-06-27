@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant QR Code Generator - DevTools 100</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
+    <header class="max-w-xl mx-auto mb-8 flex justify-between items-center">
+        <a href="../index.html" class="text-blue-400 hover:underline text-sm">← Back to Home</a>
+        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Tool 8 of 100</span>
+    </header>
+
+    <main class="max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h1 class="text-2xl font-bold mb-2 text-slate-100">QR Code Generator</h1>
+        <p class="text-slate-400 text-sm mb-6">Create instant scannable QR codes for links, text, or Wi-Fi configurations completely offline.</p>
+        
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-slate-400 text-sm mb-2">Enter URL or Text</label>
+                <input type="text" id="qrText" value="https://ap3ksha.github.io/100-tools-website/" placeholder="Type link or plain text here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500">
+            </div>
+
+            <button onclick="generateQR()" class="w-full bg-gradient-to-r from-blue-500 to-emerald-400 text-slate-950 font-bold p-3 rounded-xl hover:opacity-90 transition mt-2">
+                ⚡ Generate QR Code
+            </button>
+        </div>
+
+        <div id="qrResultBox" class="bg-slate-950 border border-slate-800 p-6 rounded-xl flex flex-col items-center justify-center">
+            <div id="qrcode" class="p-4 bg-white rounded-lg shadow-inner"></div>
+            <p class="text-slate-500 text-xs mt-4">Point your phone's camera at the screen to test scan it!</p>
+        </div>
+    </main>
+
+    <script>
+        let qrContainer = document.getElementById("qrcode");
+        let qrcodeInstance = null;
+
+        function generateQR() {
+            const textInput = document.getElementById("qrText").value.trim();
+            
+            if (!textInput) {
+                alert("Please enter some text or a valid link first!");
+                return;
+            }
+
+            // Clear old QR code data container completely
+            qrContainer.innerHTML = "";
+
+            // Construct new clean QR setup matrix
+            qrcodeInstance = new QRCode(qrContainer, {
+                text: textInput,
+                width: 200,
+                height: 200,
+                colorDark : "#020617", // slate-950 tone for dark modules
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        // Generate an initial default code on load state
+        generateQR();
+    </script>
+</body>
+</html>
